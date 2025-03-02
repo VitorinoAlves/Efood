@@ -1,4 +1,5 @@
 import { Banner } from "./components/Banner";
+import { RestoCard } from "./components/RestoCard";
 import { GlobalStyle } from "./styles";
 
 function App() {
@@ -6,7 +7,7 @@ function App() {
     <>
       <GlobalStyle />
       <Banner />
-      <h1>OLá mundo</h1>
+      <RestoCard />
     </>
   );
 }
