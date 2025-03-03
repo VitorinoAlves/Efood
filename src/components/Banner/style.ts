@@ -10,6 +10,7 @@ export const Image = styled.div`
 
     display: flex;
     justfy-content: center;
+    margin-bottom: 80px;
 
 `
 

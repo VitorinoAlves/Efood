@@ -1,16 +1,29 @@
 
-import sushi from '../../assets/images/sushi.png';
-import { Card, CardHeader, Description, MoreInfoButton, ImageCard, CardContent } from './style';
+import Tag from '../Tags';
+import { Card, CardHeader, Description, MoreInfoButton, ImageCard, CardContent, Tags } from './style';
 
-export const RestoCard = () => (
+type Props = {
+    name: string
+    description: string
+    rate: string
+    photo: string
+    tags: string[]
+}
+
+export const RestoCard = ({name, description, rate, photo, tags}:Props) => (
     <Card>
-        <ImageCard src={sushi} alt="" />
+        <ImageCard src={photo} alt="" />
+        <Tags>
+            {tags.map((tag) => (
+                <Tag key={tag} tag={tag}/>
+            ))}
+        </Tags>
         <CardContent>
             <CardHeader>
-                <h2>Hioki Sushi</h2>
-                <p>4.9&#11088;</p>
+                <h2>{name}</h2>
+                <p>{rate}&#11088;</p>
             </CardHeader>
-            <Description>Peça já o melhor da culinária japonesa no conforto da sua casa! Sushis frescos, sashimis deliciosos e pratos quentes irresistíveis. Entrega rápida, embalagens cuidadosas e qualidade garantida.Experimente o Japão sem sair do lar com nosso delivery!</Description>
+            <Description>{description}</Description>
             <MoreInfoButton href='#'>Saiba mais</MoreInfoButton>
         </CardContent>
         

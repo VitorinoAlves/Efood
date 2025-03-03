@@ -1,5 +1,5 @@
 import { Banner } from "./components/Banner";
-import { RestoCard } from "./components/RestoCard";
+import { RestoList } from "./components/RestoList";
 import { GlobalStyle } from "./styles";
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <>
       <GlobalStyle />
       <Banner />
-      <RestoCard />
+      <RestoList />
     </>
   );
 }

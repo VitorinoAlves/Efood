@@ -18,4 +18,10 @@ export const GlobalStyle = createGlobalStyle`
     body{
         background-color:rgb(255, 247, 240)
     }
+
+    .container{
+        max-width: 1024px;
+        width: 100%;
+        margin: 0 auto;
+    }
 `

@@ -4,6 +4,7 @@ import { cores } from "../../styles";
 export const Card = styled.div`
     max-width: 470px;
     color: ${cores.laranja};
+    position: relative;
 `
 
 export const CardContent = styled.div`
@@ -48,4 +49,10 @@ export const MoreInfoButton = styled.a`
     font-weight: 700;
     color: ${cores.laranjaClaro};
     background-color: ${cores.laranja};
+`
+
+export const Tags = styled.div`
+    position: absolute;
+    top: 16px;
+    right: 16px;
 `
