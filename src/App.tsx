@@ -1,4 +1,5 @@
 import { Banner } from "./components/Banner";
+import Footer from "./components/Footer";
 import { RestoList } from "./components/RestoList";
 import { GlobalStyle } from "./styles";
 
@@ -8,6 +9,7 @@ function App() {
       <GlobalStyle />
       <Banner />
       <RestoList />
+      <Footer />
     </>
   );
 }
