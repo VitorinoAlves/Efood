@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { cores } from "../../styles";
 
 export const Card = styled.div`
@@ -42,7 +43,7 @@ export const Description = styled.p`
     margin-bottom: 16px;
 `
 
-export const MoreInfoButton = styled.a`
+export const MoreInfoButton = styled(Link)`
     padding: 4px 6px;
     text-decoration: none;
     font-size: 14px;

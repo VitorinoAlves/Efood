@@ -24,7 +24,7 @@ export const RestoCard = ({name, description, rate, photo, tags}:Props) => (
                 <p>{rate}&#11088;</p>
             </CardHeader>
             <Description>{description}</Description>
-            <MoreInfoButton href='#'>Saiba mais</MoreInfoButton>
+            <MoreInfoButton to='/profile'>Saiba mais</MoreInfoButton>
         </CardContent>
         
     </Card>
