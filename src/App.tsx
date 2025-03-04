@@ -1,15 +1,18 @@
-import { Banner } from "./components/Banner";
+import { BrowserRouter } from 'react-router-dom';
+
 import Footer from "./components/Footer";
-import { RestoList } from "./components/RestoList";
 import { GlobalStyle } from "./styles";
+import Rotas from './routes';
 
 function App() {
   return (
     <>
-      <GlobalStyle />
-      <Banner />
-      <RestoList />
-      <Footer />
+      <BrowserRouter>
+        <GlobalStyle />
+        <Rotas/>
+        <Footer />
+      </BrowserRouter>
+      
     </>
   );
 }
