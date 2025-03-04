@@ -7,37 +7,37 @@ import pizza from '../../assets/images/pizza.png';
 const plates: Plates[] = [
     {
         id: 1,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
     {
         id: 2,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
     {
         id: 3,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
     {
         id: 4,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
     {
         id: 5,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
     {
         id: 6,
-        name: 'Hioki Sushi',
+        name: 'Pizza Marguerita',
         description: 'A clássica Marguerita: molho de tomate suculento, mussarela derretida, manjericão fresco e um toque de azeite. Sabor e simplicidade!',
         photo: pizza
     },
