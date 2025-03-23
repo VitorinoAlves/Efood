@@ -19,6 +19,8 @@ export const ImageCard = styled.img`
     width: 100%;
     display: block;
     margin: 0;
+    max-height: 218px;
+    object-fit: cover;
 `
 
 export const CardHeader = styled.div`

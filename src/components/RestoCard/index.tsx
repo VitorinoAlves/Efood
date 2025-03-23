@@ -3,14 +3,20 @@ import Tag from '../Tags';
 import { Card, CardHeader, Description, MoreInfoButton, ImageCard, CardContent, Tags } from './style';
 
 type Props = {
+    id: number
     name: string
     description: string
-    rate: string
+    rate: number
     photo: string
     tags: string[]
 }
 
-export const RestoCard = ({name, description, rate, photo, tags}:Props) => (
+export const RestoCard = ({id, name, description, rate, photo, tags}:Props) => {
+    /*const sliceDescription = (des: string): string => {
+        return `${ des.slice(0, 265)}...`;
+    }*/
+
+    return (
     <Card>
         <ImageCard src={photo} alt="" />
         <Tags>
@@ -24,8 +30,8 @@ export const RestoCard = ({name, description, rate, photo, tags}:Props) => (
                 <p>{rate}&#11088;</p>
             </CardHeader>
             <Description>{description}</Description>
-            <MoreInfoButton to='/profile'>Saiba mais</MoreInfoButton>
+            <MoreInfoButton to={`/profile/${id}`} >Saiba mais</MoreInfoButton>
         </CardContent>
         
     </Card>
-)
+)}
