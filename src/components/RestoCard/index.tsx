@@ -12,9 +12,9 @@ type Props = {
 }
 
 export const RestoCard = ({id, name, description, rate, photo, tags}:Props) => {
-    /*const sliceDescription = (des: string): string => {
-        return `${ des.slice(0, 265)}...`;
-    }*/
+    const sliceDescription = (des: string): string => {
+        return `${ des.slice(0, 250)}...`;
+    }
 
     return (
     <Card>
@@ -29,7 +29,7 @@ export const RestoCard = ({id, name, description, rate, photo, tags}:Props) => {
                 <h2>{name}</h2>
                 <p>{rate}&#11088;</p>
             </CardHeader>
-            <Description>{description}</Description>
+            <Description>{sliceDescription(description)}</Description>
             <MoreInfoButton to={`/profile/${id}`} >Saiba mais</MoreInfoButton>
         </CardContent>
         
