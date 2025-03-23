@@ -6,6 +6,14 @@ export const PlateCardConteiter = styled.div`
     background-color: ${cores.laranja};
     color: ${cores.laranjaClaro};
     width: 320px;
+    display: flex;
+    flex-direction: column;
+
+    > img { 
+        width: 304px;
+        height: 167px;
+        object-fit: cover;
+    }
 `
 
 export const PlateName = styled.h3`
@@ -18,12 +26,13 @@ export const PlateDescription = styled.p`
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
+    margin-bottom: 8px;
 `
 
 export const AddButton = styled.button`
     background-color: ${cores.laranjaClaro};
     color: ${cores.laranja};
-    margin-top: 8px;
+    margin-top: auto; /* Adicionado para empurrar o botão para o final */
     border: none;
     padding: 4px;
     width: 100%;
