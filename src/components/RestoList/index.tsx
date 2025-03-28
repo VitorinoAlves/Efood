@@ -1,3 +1,4 @@
+import { useGetReataurantsQuery } from "../../services/api";
 import { RestoCard } from "../RestoCard";
 import { CardList } from "./style";
 
@@ -28,13 +29,7 @@ export const capitalizeFirstLetter = (str: string): string => {
 }
 
 export const RestoList = () => {
-    const [restaurants, setRestaurants] = useState<Restaurante[]>();
-
-    useEffect(() => {
-        fetch('https://fake-api-tau.vercel.app/api/efood/restaurantes')
-            .then((res) => res.json())
-            .then((res) => setRestaurants(res));
-    }, []);
+    const { data:restaurants } = useGetReataurantsQuery()
 
 
     const getTags = (destacado: boolean, tipo: string): string[] => {

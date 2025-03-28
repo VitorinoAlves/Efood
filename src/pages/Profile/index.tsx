@@ -4,18 +4,12 @@ import PlateList from "../../components/PlateList";
 import ProfileHeader from "../../components/ProfileHeader";
 import { Restaurante } from "../../components/RestoList";
 import { useParams } from "react-router-dom";
+import { useGetPlateListQuery } from "../../services/api";
 
 
 const Profile = () => {
     const { id } = useParams();
-    const [restaurant, setResraurant] = useState<Restaurante>();
-    
-    useEffect(() => {
-        fetch(`https://fake-api-tau.vercel.app/api/efood/restaurantes/${id}`)
-            .then((res) => res.json())
-            .then((res) => setResraurant(res));
-    }, [id])
-
+    const { data:restaurant } = useGetPlateListQuery(id!);
 
     if(!restaurant){
         return (
