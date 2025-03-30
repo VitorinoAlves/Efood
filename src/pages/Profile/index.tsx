@@ -1,8 +1,5 @@
-
-import { useEffect, useState } from "react";
 import PlateList from "../../components/PlateList";
 import ProfileHeader from "../../components/ProfileHeader";
-import { Restaurante } from "../../components/RestoList";
 import { useParams } from "react-router-dom";
 import { useGetPlateListQuery } from "../../services/api";
 

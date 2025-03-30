@@ -4,6 +4,8 @@ import { PlateCardConteiter, PlateName, PlateDescription, AddButton, PlateListCo
 import closeIcon from '../../assets/images/closeIcon.svg'
 import { useState } from "react";
 import { ItemCardapio } from "../RestoList";
+import { useDispatch } from "react-redux";
+import { addToCartStore, open } from "../../store/reducers/cart";
 
 
 type Props = {
@@ -32,11 +34,17 @@ export const formataPreco = (preco = 0) => {
 }
 
 const PlateList = ({ platesList }: Props) => {
+    const dispatch = useDispatch();
     const [modal, setModal] = useState<ModalState>({
         isVisible: false,
         modalPlate: emptyPlate
     });
     
+
+    const addToCart = (plate: ItemCardapio) => {
+        dispatch(addToCartStore(plate));
+        dispatch(open())
+    }
 
     return (
     <>
@@ -60,7 +68,7 @@ const PlateList = ({ platesList }: Props) => {
                     <h3>{modal.modalPlate.nome}</h3>
                     <p>{modal.modalPlate.descricao}</p>
                     <p>Serve: {modal.modalPlate.porcao}.</p>
-                    <ModalAddButton>Adicionar ao carrinho - {formataPreco(modal.modalPlate.preco)}</ModalAddButton>
+                    <ModalAddButton onClick={() => addToCart(modal.modalPlate)}>Adicionar ao carrinho - {formataPreco(modal.modalPlate.preco)}</ModalAddButton>
                 </div>
             </ModalContent>
             <div className="overlay" onClick={() => setModal({isVisible: false, modalPlate: emptyPlate})}></div>

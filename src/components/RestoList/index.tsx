@@ -2,8 +2,6 @@ import { useGetReataurantsQuery } from "../../services/api";
 import { RestoCard } from "../RestoCard";
 import { CardList } from "./style";
 
-import { useEffect, useState } from "react";
-
 export type ItemCardapio = {
     foto: string;
     preco: number;

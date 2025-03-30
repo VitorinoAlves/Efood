@@ -14,6 +14,7 @@ export const SharedTextStyle = css`
     font-size: 18px;
     font-weight: bold;
     color: ${cores.laranja};
+    cursor: pointer;
 `;
 
 export const BannerTexts = styled.p`
