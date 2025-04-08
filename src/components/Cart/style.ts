@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { cores } from "../../styles";
+import { AddButton } from "../PlateList/style";
 
 export const CartConteiner = styled.div`
     display: none;
@@ -17,10 +18,18 @@ export const Sidebar = styled.aside`
     height: 100%;
     padding: 32px 8px;
     overflow-y: auto; /* Adiciona a barra de rolagem vertical */
+    width: 356px;
     
 
     ul{
         padding: 0;
+    }
+
+    h3 {
+        font-size: 16px;
+        color: ${cores.laranjaClaro};
+        font-weight: 700;
+        margin-bottom: 16px;
     }
 `
 export const CartItem = styled.li`
@@ -78,3 +87,37 @@ export const TrashIcon = styled.img`
     bottom: 8px;
     cursor: pointer;
 `
+
+export const Form = styled.form`
+    color: ${cores.laranjaClaro};
+
+    label {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    input {
+        background-color: ${cores.laranjaClaro};
+        margin-bottom: 8px;
+        border: none;
+        display: block;
+        padding: 8px;
+        width: 100%;
+    }
+
+    .rowHalfLine {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .buttons {
+        margin-top: 24px;
+    }
+`
+
+export const CartButton = styled(AddButton)`
+    margin-bottom: 8px;
+`
+
