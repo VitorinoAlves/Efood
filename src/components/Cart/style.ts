@@ -108,8 +108,15 @@ export const Form = styled.form`
     }
 
     .rowHalfLine {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .rowTwoThird {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
     }
 
     .buttons {
@@ -119,5 +126,13 @@ export const Form = styled.form`
 
 export const CartButton = styled(AddButton)`
     margin-bottom: 8px;
+`
+
+export const OrderFinishedText = styled.p`
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    color: ${cores.laranjaClaro};
+    margin-bottom: 24px;
 `
 
