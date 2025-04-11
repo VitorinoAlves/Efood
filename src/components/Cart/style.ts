@@ -105,6 +105,10 @@ export const Form = styled.form`
         display: block;
         padding: 8px;
         width: 100%;
+
+        &.error {
+            border: 2px solid red;
+        }
     }
 
     .rowHalfLine {

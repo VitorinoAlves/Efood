@@ -13,10 +13,23 @@ import { formataPreco } from "../PlateList";
 import { ItemCardapio } from "../RestoList";
 import { useState } from "react";
 
+type delivery= {
+    receiver: string,
+    address: {
+        description: string,
+        city: string,
+        zipCode: string,
+        number: number,
+        complement: string
+    }
+}
+
+
 const Cart = () => {
     const { isOpen, items } = useSelector((state: RootState) => state.cart);
     const displatch = useDispatch();
     const [cartPhase, setCartPhase] = useState<'selectingProducts' | 'informingAddress' | 'payment' | 'orderFinished'>('selectingProducts');
+    const [deliveryAddress, setDeliveryAddress] = useState<delivery>();
 
     const closeCart = () => {
         displatch(close());
@@ -41,12 +54,64 @@ const Cart = () => {
 
         },
         validationSchema: Yup.object({
-            client: Yup.string().min(5, 'O nome precisa ter pelo menos 5 caracteres').required('O campo é obrigatório')
+            client: Yup.string().min(5, 'O nome precisa ter pelo menos 5 caracteres').required('O campo é obrigatório'),
+            address: Yup.string().required('O campo é obrigatório'),
+            city: Yup.string().required('O campo é obrigatório'),
+            zipCode: Yup.string().required('O campo é obrigatório'),
+            number: Yup.string().required('O campo é obrigatório'),
+            complement: Yup.string(),
         }),
         onSubmit: (values) => {
-            alert('Finalizar form');
+            setDeliveryAddress({
+                receiver: values.client,
+                address: {
+                    description: 'description',
+                    city: values.city,
+                    zipCode: values.zipCode,
+                    number: Number(values.number),
+                    complement: values.complement
+                }
+            });
+            setCartPhase('payment');
+            console.log(deliveryAddress);
+        }
+    });
+
+    const paymentForm = useFormik({
+        initialValues: {
+            cardOwner: '',
+            cardNumber: '',
+            cardCvv: '',
+            monthExpirationCard: '',
+            yearExpirationCard: ''
+        },
+        validationSchema: Yup.object({
+            cardOwner: Yup.string().min(5, 'O nome precisa ter pelo menos 5 caracteres').required('O campo é obrigatório'),
+            cardNumber: Yup.string().min(16, 'O número precisa ter pelo menos 16 digitos').required('O campo é obrigatório'),
+            cardCvv: Yup.string().required('O campo é obrigatório'),
+            monthExpirationCard: Yup.string().required('O campo é obrigatório'),
+            yearExpirationCard: Yup.string().required('O campo é obrigatório')
+        }),
+        onSubmit: (values) => {
+            setCartPhase('orderFinished')
         }
     })
+
+    const checkAddresstHasError = (fieldName: string) => {
+        const isChanged = fieldName in addressForm.touched 
+        const isInvalid = fieldName in addressForm.errors
+        const hasError = isChanged && isInvalid
+    
+        return hasError
+    }
+
+    const checkPaymentHasError = (fieldName: string) => {
+        const isChanged = fieldName in paymentForm.touched 
+        const isInvalid = fieldName in paymentForm.errors
+        const hasError = isChanged && isInvalid
+    
+        return hasError
+    }
 
     return (
         <CartConteiner className={isOpen ? 'is-open' : ''}>
@@ -77,27 +142,34 @@ const Cart = () => {
                 {cartPhase==='informingAddress' && (
                     <>
                         <h3>Entrega</h3>
-                        <Form>
+                        <Form onSubmit={addressForm.handleSubmit}>
                             <label htmlFor="client">Quem irá receber</label>
-                            <input id="client" name="client" type="text" />
+                            <input id="client" name="client" type="text" value={addressForm.values.client} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur} 
+                                className={checkAddresstHasError('client') ? 'error' : ''} />
                             <label htmlFor="address">Endereço</label>
-                            <input id="address" name="address" type="text" />
+                            <input id="address" name="address" type="text" value={addressForm.values.address} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur} 
+                                className={checkAddresstHasError('address') ? 'error' : ''} />
                             <label htmlFor="city">Cidade</label>
-                            <input id="city" name="city" type="text" />
+                            <input id="city" name="city" type="text" value={addressForm.values.city} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur}
+                                className={checkAddresstHasError('address') ? 'error' : ''} />
                             <div className="rowHalfLine">
                                 <div>   
                                     <label htmlFor="zipCode">Cep</label>
-                                    <InputMask mask="_____-___" replacement={{ _: /\d/ }} id="zipCode" name="zipCode" type="text" />
+                                    <InputMask mask="_____-___" replacement={{ _: /\d/ }} id="zipCode" name="zipCode" type="text" 
+                                        value={addressForm.values.zipCode} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur}
+                                        className={checkAddresstHasError('zipCode') ? 'error' : ''} />
                                 </div>
                                 <div>
                                     <label htmlFor="number">Número</label>
-                                    <input id="number" name="number" type="text" />
+                                    <input id="number" name="number" type="text" value={addressForm.values.number} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur}
+                                        className={checkAddresstHasError('number') ? 'error' : ''} />
                                 </div>
                             </div>
                             <label htmlFor="complement">Complemento</label>
-                            <input id="complement" name="complement" type="text" />
+                            <input id="complement" name="complement" type="text" value={addressForm.values.complement} onChange={addressForm.handleChange} onBlur={addressForm.handleBlur} 
+                                className={checkAddresstHasError('complement') ? 'error' : ''} />
                             <div className="buttons">
-                                <CartButton onClick={() => setCartPhase('payment')}>Continuar com o pagamento</CartButton>
+                                <CartButton type="submit" onClick={() => addressForm.handleSubmit}>Continuar com o pagamento</CartButton>
                                 <CartButton onClick={() => setCartPhase('selectingProducts')}>Voltar para o carrinho</CartButton>
                             </div>
                             
@@ -109,31 +181,40 @@ const Cart = () => {
                 {cartPhase==='payment' && (
                     <>
                         <h3>Pagamento - Valor a pagar {formataPreco(returnTotalPrice())}</h3>
-                        <Form>
-                            <label htmlFor="client">Nome do cartão</label>
-                            <input id="cardOwner" name="cardOwner" type="text" />
+                        <Form onSubmit={paymentForm.handleSubmit}>
+                            <label htmlFor="cardOwner">Nome do cartão</label>
+                            <input id="cardOwner" name="cardOwner" type="text" value={paymentForm.values.cardOwner} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
+                                className={checkPaymentHasError('cardOwner') ? 'error' : ''} />
                             <div className="rowTwoThird">
                                 <div>   
                                     <label htmlFor="cardNumber">Número do cartão</label>
-                                    <InputMask mask="____ ___ ____ ____" replacement={{ _: /\d/ }} id="cardNumber" name="cardNumber" type="text" />
+                                    <InputMask mask="____ ____ ____ ____" replacement={{ _: /\d/ }} id="cardNumber" name="cardNumber" type="text" 
+                                        value={paymentForm.values.cardNumber} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
+                                        className={checkPaymentHasError('cardNumber') ? 'error' : ''} />
                                 </div>
                                 <div>
                                     <label htmlFor="cardCvv">CVV</label>
-                                    <InputMask mask="___" replacement={{ _: /\d/ }} id="cardCvv" name="cardCvv" type="text" />
+                                    <InputMask mask="___" replacement={{ _: /\d/ }} id="cardCvv" name="cardCvv" type="text" 
+                                        value={paymentForm.values.cardCvv} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
+                                        className={checkPaymentHasError('cardCvv') ? 'error' : ''} />
                                 </div>
                             </div>
                             <div className="rowHalfLine">
                                 <div>   
                                     <label htmlFor="monthExpirationCard">Mês de vencimento</label>
-                                    <InputMask mask="__" replacement={{ _: /\d/ }} id="monthExpirationCard" name="monthExpirationCard" type="text" />
+                                    <InputMask mask="__" replacement={{ _: /\d/ }} id="monthExpirationCard" name="monthExpirationCard" type="text" 
+                                        value={paymentForm.values.monthExpirationCard} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
+                                        className={checkPaymentHasError('monthExpirationCard') ? 'error' : ''} />
                                 </div>
                                 <div>
                                     <label htmlFor="yearExpirationCard">Ano de vencimento</label>
-                                    <InputMask mask="__" replacement={{ _: /\d/ }} id="yearExpirationCard" name="yearExpirationCard" type="text" />
+                                    <InputMask mask="__" replacement={{ _: /\d/ }} id="yearExpirationCard" name="yearExpirationCard" type="text" 
+                                        value={paymentForm.values.yearExpirationCard} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
+                                        className={checkPaymentHasError('yearExpirationCard') ? 'error' : ''} />
                                 </div>
                             </div>
                             <div className="buttons">
-                                <CartButton onClick={() => setCartPhase('orderFinished')}>Finalizar pagamento</CartButton>
+                                <CartButton type="submit" onClick={() => paymentForm.handleSubmit}>Finalizar pagamento</CartButton>
                                 <CartButton onClick={() => setCartPhase('informingAddress')}>Voltar para a edição do endereço</CartButton>
                             </div>
                             
