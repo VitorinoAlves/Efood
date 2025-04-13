@@ -13,6 +13,8 @@ import { formataPreco } from "../PlateList";
 import { ItemCardapio } from "../RestoList";
 import { useEffect, useState } from "react";
 import { Delivery, usePurchaseMutation } from "../../services/api";
+import Loader from "../Loader";
+import { cores } from "../../styles";
 
 
 const Cart = () => {
@@ -21,7 +23,7 @@ const Cart = () => {
     const [cartPhase, setCartPhase] = useState<'selectingProducts' | 'informingAddress' | 'payment' | 'orderFinished'>('selectingProducts');
     const [deliveryAddress, setDeliveryAddress] = useState<Delivery>();
 
-    const [purchase, {isLoading, data, isSuccess}] = usePurchaseMutation();
+    const [purchase, {isLoading, data, isSuccess, isError}] = usePurchaseMutation();
 
     const closeCart = () => {
         displatch(close());
@@ -249,25 +251,29 @@ const Cart = () => {
                     </>
                 )}
 
-                {cartPhase==='orderFinished' && (
+                {cartPhase === 'orderFinished' && (
                     <>
-                    {isSuccess && data ? (
+                    {isLoading ? (
+                        // Cenário de Loading
+                        <Loader color={cores.laranjaClaro} />
+                    ) : isSuccess && data ? (
+                        // Cenário de Sucesso
                         <>
                             <h3>Pedido realizado - {data.orderId}</h3>
                             <OrderFinishedText>Estamos felizes em informar que seu pedido já está em processo de preparação e, em breve, será entregue no endereço fornecido.</OrderFinishedText>
-                            <OrderFinishedText>Gostaríamos de ressaltar que nossos entregadores não estão autorizados a realizar cobranças extras. </OrderFinishedText>
+                            <OrderFinishedText>Gostaríamos de ressaltar que nossos entregadores não estão autorizados a realizar cobranças extras.</OrderFinishedText>
                             <OrderFinishedText>Lembre-se da importância de higienizar as mãos após o recebimento do pedido, garantindo assim sua segurança e bem-estar durante a refeição.</OrderFinishedText>
                             <OrderFinishedText>Esperamos que desfrute de uma deliciosa e agradável experiência gastronômica. Bom apetite!</OrderFinishedText>
                             <CartButton onClick={() => setCartPhase('selectingProducts')}>Concluir</CartButton>
                         </>
-                    ) : (
+                    ) : isError ? (
+                        // Cenário de Erro
                         <>
                             <h3>Ops! Algo deu errado</h3>
                             <OrderFinishedText>Algo deu errado ao concluir o seu pedido, por favor tente novamente.</OrderFinishedText>
                             <CartButton onClick={() => setCartPhase('selectingProducts')}>Tentar novamente</CartButton>
                         </>
-                    )}
-                        
+                    ) : null}
                     </>
                 )}
             

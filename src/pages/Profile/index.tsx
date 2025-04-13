@@ -2,6 +2,8 @@ import PlateList from "../../components/PlateList";
 import ProfileHeader from "../../components/ProfileHeader";
 import { useParams } from "react-router-dom";
 import { useGetPlateListQuery } from "../../services/api";
+import Loader from "../../components/Loader";
+import { cores } from "../../styles";
 
 
 const Profile = () => {
@@ -10,7 +12,7 @@ const Profile = () => {
 
     if(!restaurant){
         return (
-            <h2>Carregando...</h2>
+            <Loader color={cores.laranja} />
         )
     }
 

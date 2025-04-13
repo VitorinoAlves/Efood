@@ -1,4 +1,6 @@
 import { useGetReataurantsQuery } from "../../services/api";
+import { cores } from "../../styles";
+import Loader from "../Loader";
 import { RestoCard } from "../RestoCard";
 import { CardList } from "./style";
 
@@ -40,7 +42,7 @@ export const RestoList = () => {
 
     if(!restaurants){
         return (
-            <h2>Carregando...</h2>
+            <Loader color={cores.laranja} />
         )
     }
 
