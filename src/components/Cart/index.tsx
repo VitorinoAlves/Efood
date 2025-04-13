@@ -1,6 +1,6 @@
 import { CartConteiner, Sidebar, Overlay, ValueText, CartItem, TrashIcon, Form, CartButton, OrderFinishedText } from "./style";
 import { AddButton } from "../PlateList/style";
-import { close, removeFromCart } from "../../store/reducers/cart";
+import { clear, close, removeFromCart } from "../../store/reducers/cart";
 import { InputMask } from '@react-input/mask';
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
@@ -11,25 +11,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { formataPreco } from "../PlateList";
 import { ItemCardapio } from "../RestoList";
-import { useState } from "react";
-
-type delivery= {
-    receiver: string,
-    address: {
-        description: string,
-        city: string,
-        zipCode: string,
-        number: number,
-        complement: string
-    }
-}
+import { useEffect, useState } from "react";
+import { Delivery, usePurchaseMutation } from "../../services/api";
 
 
 const Cart = () => {
     const { isOpen, items } = useSelector((state: RootState) => state.cart);
     const displatch = useDispatch();
     const [cartPhase, setCartPhase] = useState<'selectingProducts' | 'informingAddress' | 'payment' | 'orderFinished'>('selectingProducts');
-    const [deliveryAddress, setDeliveryAddress] = useState<delivery>();
+    const [deliveryAddress, setDeliveryAddress] = useState<Delivery>();
+
+    const [purchase, {isLoading, data, isSuccess}] = usePurchaseMutation();
 
     const closeCart = () => {
         displatch(close());
@@ -42,6 +34,12 @@ const Cart = () => {
     const removeCartItem = (plate: ItemCardapio) => {
         displatch(removeFromCart(plate));
     }
+
+    useEffect(() => {
+        if(isSuccess){
+            displatch(clear());
+        }
+    }, [displatch, isSuccess]);
 
     const addressForm = useFormik({
         initialValues: {
@@ -57,7 +55,7 @@ const Cart = () => {
             client: Yup.string().min(5, 'O nome precisa ter pelo menos 5 caracteres').required('O campo é obrigatório'),
             address: Yup.string().required('O campo é obrigatório'),
             city: Yup.string().required('O campo é obrigatório'),
-            zipCode: Yup.string().required('O campo é obrigatório'),
+            zipCode: Yup.string().min(9, 'O cep precisa de ao menos 9 caracteres').required('O campo é obrigatório'),
             number: Yup.string().required('O campo é obrigatório'),
             complement: Yup.string(),
         }),
@@ -87,13 +85,34 @@ const Cart = () => {
         },
         validationSchema: Yup.object({
             cardOwner: Yup.string().min(5, 'O nome precisa ter pelo menos 5 caracteres').required('O campo é obrigatório'),
-            cardNumber: Yup.string().min(16, 'O número precisa ter pelo menos 16 digitos').required('O campo é obrigatório'),
-            cardCvv: Yup.string().required('O campo é obrigatório'),
-            monthExpirationCard: Yup.string().required('O campo é obrigatório'),
-            yearExpirationCard: Yup.string().required('O campo é obrigatório')
+            cardNumber: Yup.string().min(19, 'O número precisa ter pelo menos 16 digitos').required('O campo é obrigatório'),
+            cardCvv: Yup.string().min(3, 'O CVV deve conter 3 dígitos').required('O campo é obrigatório'),
+            monthExpirationCard: Yup.string().min(2, 'O mês de vencimento deve conter 2 dígitos').required('O campo é obrigatório'),
+            yearExpirationCard: Yup.string().min(4, 'O ano de vencimento deve conter 4 dígitos').required('O campo é obrigatório')
         }),
         onSubmit: (values) => {
-            setCartPhase('orderFinished')
+            if (deliveryAddress) {
+                purchase({
+                    products: items.map((item) => ({
+                        id: item.id,
+                        price: item.preco as number
+                    })),
+                    delivery: deliveryAddress,
+                    payment: {
+                        card: {
+                            name: values.cardOwner,
+                            number: values.cardNumber,
+                            code: Number(values.cardCvv),
+                            expires: {
+                                month: Number(values.monthExpirationCard),
+                                year: Number(values.yearExpirationCard)
+                            }
+                        }
+                    }
+                })
+                setCartPhase('orderFinished')
+            }
+            
         }
     })
 
@@ -121,7 +140,7 @@ const Cart = () => {
                     <>
                         <ul>
                             {items.map((item) => (
-                                <CartItem>
+                                <CartItem key={item.id}>
                                     <img className="productPhoto" src={item.foto} alt="Foto do prato"/>
                                     <div>
                                         <h4>{item.nome}</h4>
@@ -135,7 +154,14 @@ const Cart = () => {
                             <p>Valor Total</p>
                             <p>{formataPreco(returnTotalPrice())}</p>
                         </ValueText>
-                        <AddButton onClick={() => setCartPhase('informingAddress')}>Confirmar com a entrega</AddButton>
+                        {items.length > 0 ? (
+                            <AddButton onClick={() => setCartPhase('informingAddress')}>Confirmar com a entrega</AddButton>
+                        ) : (
+                            <ValueText>
+                                <p>Seu carrinho está vazio.</p>
+                            </ValueText>
+                            
+                        )}
                     </>
                 )}
 
@@ -208,13 +234,13 @@ const Cart = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="yearExpirationCard">Ano de vencimento</label>
-                                    <InputMask mask="__" replacement={{ _: /\d/ }} id="yearExpirationCard" name="yearExpirationCard" type="text" 
+                                    <InputMask mask="____" replacement={{ _: /\d/ }} id="yearExpirationCard" name="yearExpirationCard" type="text" 
                                         value={paymentForm.values.yearExpirationCard} onChange={paymentForm.handleChange} onBlur={paymentForm.handleBlur} 
                                         className={checkPaymentHasError('yearExpirationCard') ? 'error' : ''} />
                                 </div>
                             </div>
                             <div className="buttons">
-                                <CartButton type="submit" onClick={() => paymentForm.handleSubmit}>Finalizar pagamento</CartButton>
+                                <CartButton type="submit" onClick={() => paymentForm.handleSubmit} disabled={isLoading}>Finalizar pagamento</CartButton>
                                 <CartButton onClick={() => setCartPhase('informingAddress')}>Voltar para a edição do endereço</CartButton>
                             </div>
                             
@@ -225,12 +251,23 @@ const Cart = () => {
 
                 {cartPhase==='orderFinished' && (
                     <>
-                        <h3>Pedido realizado - ORDER_ID</h3>
-                        <OrderFinishedText>Estamos felizes em informar que seu pedido já está em processo de preparação e, em breve, será entregue no endereço fornecido.</OrderFinishedText>
-                        <OrderFinishedText>Gostaríamos de ressaltar que nossos entregadores não estão autorizados a realizar cobranças extras. </OrderFinishedText>
-                        <OrderFinishedText>Lembre-se da importância de higienizar as mãos após o recebimento do pedido, garantindo assim sua segurança e bem-estar durante a refeição.</OrderFinishedText>
-                        <OrderFinishedText>Esperamos que desfrute de uma deliciosa e agradável experiência gastronômica. Bom apetite!</OrderFinishedText>
-                        <CartButton onClick={() => setCartPhase('selectingProducts')}>Concluir</CartButton>
+                    {isSuccess && data ? (
+                        <>
+                            <h3>Pedido realizado - {data.orderId}</h3>
+                            <OrderFinishedText>Estamos felizes em informar que seu pedido já está em processo de preparação e, em breve, será entregue no endereço fornecido.</OrderFinishedText>
+                            <OrderFinishedText>Gostaríamos de ressaltar que nossos entregadores não estão autorizados a realizar cobranças extras. </OrderFinishedText>
+                            <OrderFinishedText>Lembre-se da importância de higienizar as mãos após o recebimento do pedido, garantindo assim sua segurança e bem-estar durante a refeição.</OrderFinishedText>
+                            <OrderFinishedText>Esperamos que desfrute de uma deliciosa e agradável experiência gastronômica. Bom apetite!</OrderFinishedText>
+                            <CartButton onClick={() => setCartPhase('selectingProducts')}>Concluir</CartButton>
+                        </>
+                    ) : (
+                        <>
+                            <h3>Ops! Algo deu errado</h3>
+                            <OrderFinishedText>Algo deu errado ao concluir o seu pedido, por favor tente novamente.</OrderFinishedText>
+                            <CartButton onClick={() => setCartPhase('selectingProducts')}>Tentar novamente</CartButton>
+                        </>
+                    )}
+                        
                     </>
                 )}
             
